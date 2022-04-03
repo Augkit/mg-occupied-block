@@ -124,6 +124,15 @@ void ATetromino::BeginPlay()
 	SpawnBlocks();
 }
 
+void ATetromino::Destroyed()
+{
+	Super::Destroyed();
+	for (ABlock* BlockInstance : BlockInstances)
+	{
+		BlockInstance->Destroy();
+	}
+}
+
 // Called every frame
 void ATetromino::Tick(float DeltaTime)
 {
@@ -133,16 +142,12 @@ void ATetromino::Tick(float DeltaTime)
 		const FRotator CurrentRotation = ContainerSceneComponentPtr->GetRelativeRotation();
 		if ((CurrentRotation - RotationTarget).IsNearlyZero())
 		{
-			//SetActorRelativeRotation(RotationTarget);
-			//SetActorRotation(RotationTarget);
 			ContainerSceneComponentPtr->SetRelativeRotation(RotationTarget);
 			bIsRotating = false;
 
 		}
 		else
 		{
-			//SetActorRelativeRotation(FMath::RInterpTo(CurrentRotation, RotationTarget, DeltaTime, 10));
-			//SetActorRotation(FMath::RInterpTo(CurrentRotation, RotationTarget, DeltaTime, 10));
 			ContainerSceneComponentPtr->SetRelativeRotation(FMath::RInterpTo(CurrentRotation, RotationTarget, DeltaTime, 10));
 		}
 

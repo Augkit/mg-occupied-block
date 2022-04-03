@@ -9,7 +9,7 @@ void UTetrominoOrigin::PostInitProperties()
 	// 根据中心位置进行偏移
 	if (!OffsetCenter.IsNearlyZero())
 	{
-		for (int i = 0; i < BlockOccupationArray.Num(); i++)
+		for (int32 i = 0; i < BlockOccupationArray.Num(); i++)
 		{
 			FVector2D* BlockOccupation = &BlockOccupationArray[i];
 			*BlockOccupation -= OffsetCenter;
@@ -69,16 +69,10 @@ void UTetrominoOrigin::RotateTo(float Degrees)
 	FMath::DivideAndRoundNearest<float>(Degrees, 360.f);
 	int32 FloorDegrees = FMath::FloorToInt(Degrees);
 	RotateDegree = Degrees - FloorDegrees + FloorDegrees % 360;
-	const float Radian = RotateDegree  / 180 * PI;
-	 float CosA = FMath::Cos(Radian);
-	 float SinA = FMath::Sin(Radian);
-	CosA = FMath::RoundToInt(CosA);
-	SinA = FMath::RoundToInt(SinA);
 
-	for (int i = 0; i < BlockOccupationArray.Num(); i++)
+	for (int32 i = 0; i < BlockOccupationArray.Num(); i++)
 	{
-		FVector2D* BlockOccupation = &BlockOccupationArray[i];
-		*BlockOccupation = BlockOccupation->GetRotated(RotateDegree);
+		BlockOccupationArray[i] = BlockOccupationArray[i].GetRotated(RotateDegree);
 	}
 
 }

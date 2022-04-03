@@ -51,7 +51,7 @@ FVector ACheckerboard::GetWorldLocationByColRow(int32 Col, int32 Row)
 
 FVector ACheckerboard::GetWorldLocationByBlock(ABlock* Block, bool& Success)
 {
-	for (int i = 0; i < BlockInstances.Num(); i++)
+	for (int32 i = 0; i < BlockInstances.Num(); i++)
 	{
 		if (Block == BlockInstances[i])
 		{

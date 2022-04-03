@@ -50,7 +50,7 @@ bool UCheckerboardController::CheckTetrominoVacancies(ATetromino* TetrominoPtr, 
 	int32 TetrominoSide = TetrominoPtr->GetSide();
 
 	// 旋转4次，对每次旋转后的拼图块与棋盘每个网格进行校验是否放的下
-	for (int i = 0; i < 4; i++)
+	for (int32 i = 0; i < 4; i++)
 	{
 		float  Degrees = i * 90;
 		OriginCopy->RotateTo(Degrees);
@@ -69,10 +69,12 @@ bool UCheckerboardController::CheckTetrominoVacancies(ATetromino* TetrominoPtr, 
 			bool HasNearlySameSideBlock = false;
 
 			// 遍历前角度下拼图块所有的区块
-			for (int ITetrominoBlock = 0; ITetrominoBlock < BlockMount; ITetrominoBlock++)
+			for (int32 ITetrominoBlock = 0; ITetrominoBlock < BlockMount; ITetrominoBlock++)
 			{
 				// 计算拼图块之于棋盘的相对位置
 				FVector2D TetrominoBlockBoardLocation = TetrominoBlockRelativeLocation[ITetrominoBlock] + BoardBlockLocation;
+
+				UE_LOG(LogTemp, Warning, TEXT("Length: %d , Index: %d xxxx  %s"), BlockMount, ITetrominoBlock, *TetrominoBlockBoardLocation.ToString());
 
 				// 棋盘区块是否中立 || 判断是否越界
 				if (
@@ -84,22 +86,25 @@ bool UCheckerboardController::CheckTetrominoVacancies(ATetromino* TetrominoPtr, 
 					break;
 				}
 				// 如果已经存在相邻的同阵营区块则跳过检测
-				if (HasNearlySameSideBlock) break;
+				if (HasNearlySameSideBlock) continue;
 				for (FVector2D Way : FourWay)
 				{
 					if (Checkerboard->IsSameSideByLocation(TetrominoSide, Way + TetrominoBlockBoardLocation))
 					{
 						HasNearlySameSideBlock = true;
+						break;
 					}
 				}
 			}
 			// 如果当前棋盘区块为中心点可以放下当前角度的拼图块则结束检测逻辑
 			if (IsMatchRules && HasNearlySameSideBlock)
 			{
+				UE_LOG(LogTemp, Warning, TEXT("----------------- Success"));
 				ValidLocation = BoardBlockLocation;
 				ValidDegrees = Degrees;
 				return true;
 			}
+			UE_LOG(LogTemp, Warning, TEXT("----------------- Error"));
 
 		}
 	}
@@ -131,7 +136,7 @@ bool UCheckerboardController::CheckTetrominoVacancieAtLocation(UTetrominoOrigin*
 	bool HasNearlySameSideBlock = false;
 
 	// 遍历拼图块所有的区块
-	for (int ITetrominoBlock = 0; ITetrominoBlock < BlockMount; ITetrominoBlock++)
+	for (int32 ITetrominoBlock = 0; ITetrominoBlock < BlockMount; ITetrominoBlock++)
 	{
 		// 计算拼图块之于棋盘的相对位置
 		FVector2D TetrominoBlockBoardLocation = TetrominoBlockRelativeLocation[ITetrominoBlock] + BoardLocation;
@@ -146,12 +151,13 @@ bool UCheckerboardController::CheckTetrominoVacancieAtLocation(UTetrominoOrigin*
 			break;
 		}
 		// 如果已经存在相邻的同阵营区块则跳过检测
-		if (HasNearlySameSideBlock) break;
+		if (HasNearlySameSideBlock) continue;
 		for (FVector2D Way : FourWay)
 		{
 			if (Checkerboard->IsSameSideByLocation(TetrominoSide, Way + TetrominoBlockBoardLocation))
 			{
 				HasNearlySameSideBlock = true;
+				break;
 			}
 		}
 	}
@@ -163,10 +169,10 @@ bool UCheckerboardController::CheckTetrominoVacancieAtLocation(UTetrominoOrigin*
 void UCheckerboardController::PutTetrominoToBoard(bool& Success)
 {
 	Success = CheckTetrominoOnBoardVacancie();
-	if(!Success) return;
+	if (!Success) return;
 	TArray<FVector2D> TetronminoBlocks;
 	TetrominoOnBoard->GetOriginBlockOccupations(TetronminoBlocks);
-	for (int i = 0; i < TetronminoBlocks.Num(); i++)
+	for (int32 i = 0; i < TetronminoBlocks.Num(); i++)
 	{
 		TetronminoBlocks[i] += TetrominoBoardLocation;
 	}
