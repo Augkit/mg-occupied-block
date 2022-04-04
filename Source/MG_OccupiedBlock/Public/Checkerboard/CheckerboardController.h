@@ -3,13 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Checkerboard/Tetromino.h"
+#include "Checkerboard/Checkerboard.h"
+#include "Checkerboard/TetrominoOrigin.h"
 #include "UObject/NoExportTypes.h"
-#include "Tetromino.h"
-#include "Checkerboard.h"
 #include "CheckerboardController.generated.h"
 
 /**
- *
+ * 棋盘控制器
+ * 提供一些拼图块和棋盘交互的方法
  */
 UCLASS(BlueprintType, Blueprintable)
 class MG_OCCUPIEDBLOCK_API UCheckerboardController : public UObject

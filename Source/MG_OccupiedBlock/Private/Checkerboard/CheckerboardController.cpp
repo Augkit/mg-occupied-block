@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Checkerboard/TetrominoOrigin.h"
 #include "Checkerboard/CheckerboardController.h"
 
 FVector2D FourWay[4] = { FVector2D(1,0), FVector2D(-1,0),FVector2D(0,1),FVector2D(0,-1) };
@@ -74,8 +73,6 @@ bool UCheckerboardController::CheckTetrominoVacancies(ATetromino* TetrominoPtr, 
 				// 计算拼图块之于棋盘的相对位置
 				FVector2D TetrominoBlockBoardLocation = TetrominoBlockRelativeLocation[ITetrominoBlock] + BoardBlockLocation;
 
-				UE_LOG(LogTemp, Warning, TEXT("Length: %d , Index: %d xxxx  %s"), BlockMount, ITetrominoBlock, *TetrominoBlockBoardLocation.ToString());
-
 				// 棋盘区块是否中立 || 判断是否越界
 				if (
 					!Checkerboard->IsSameSideByLocation(-1, TetrominoBlockBoardLocation) ||
@@ -99,12 +96,10 @@ bool UCheckerboardController::CheckTetrominoVacancies(ATetromino* TetrominoPtr, 
 			// 如果当前棋盘区块为中心点可以放下当前角度的拼图块则结束检测逻辑
 			if (IsMatchRules && HasNearlySameSideBlock)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("----------------- Success"));
 				ValidLocation = BoardBlockLocation;
 				ValidDegrees = Degrees;
 				return true;
 			}
-			UE_LOG(LogTemp, Warning, TEXT("----------------- Error"));
 
 		}
 	}

@@ -6,7 +6,6 @@
 #include "GameFramework/Actor.h"
 #include "Checkerboard/Block.h"
 #include "Checkerboard/CheckerboardController.h"
-#include "Checkerboard/TetrominoOrigin.h"
 #include "Checkerboard.generated.h"
 
 UCLASS()
@@ -21,7 +20,10 @@ public:
 		int32 Size;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Size)
 		float WidthHeight;
-	UPROPERTY(BlueprintReadWrite, Category = Checkerboard)
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Size)
+		//TMap<int32, TArray<FVector2D>> Mapping;
+
+	UPROPERTY(BlueprintReadOnly, Category = Checkerboard)
 		TArray<ABlock*> BlockInstances;
 	// Sets default values for this actor's properties
 	ACheckerboard();
@@ -44,6 +46,9 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 		bool IsOutOfBounds(FVector2D Location);
 
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+		int32 GetScoreBySide(int32 Side);
+
 	// 指定位置是否是同一阵营
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 		bool IsSameSideByLocation(int32 Side, FVector2D Location);
@@ -62,6 +67,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	virtual void Destroyed() override;
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

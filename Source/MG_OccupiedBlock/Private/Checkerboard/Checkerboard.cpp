@@ -1,7 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Kismet/KismetMathLibrary.h"
 #include "Checkerboard/Checkerboard.h"
+
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 ACheckerboard::ACheckerboard()
@@ -67,11 +68,11 @@ FVector ACheckerboard::GetWorldLocationByBlock(ABlock* Block, bool& Success)
 
 ABlock* ACheckerboard::GetBlockByLocation(FVector2D Location)
 {
-	int32 BlockIndex = GetBlockIndexByColRow(Location);
-	if (BlockIndex >= BlockInstances.Num() || BlockIndex < 0)
+	if(IsOutOfBounds(Location))
 	{
 		return nullptr;
 	}
+	int32 BlockIndex = GetBlockIndexByColRow(Location);
 	return BlockInstances[BlockIndex];
 }
 bool ACheckerboard::IsOutOfBounds(FVector2D Location)
@@ -81,10 +82,23 @@ bool ACheckerboard::IsOutOfBounds(FVector2D Location)
 	return Col < 0 || Col >= Size || Row < 0 || Row >= Size;
 }
 
+int32 ACheckerboard::GetScoreBySide(int32 Side)
+{
+	int32 Score = 0;
+	for (ABlock* BlockInstance : BlockInstances)
+	{
+		if (BlockInstance->Side == Side)
+		{
+			++Score;
+		}
+	}
+	return Score;
+}
+
 bool ACheckerboard::IsSameSideByLocation(int32 Side, FVector2D Location)
 {
 	ABlock* TargetBlock = GetBlockByLocation(Location);
-	if(TargetBlock != nullptr)
+	if (TargetBlock != nullptr)
 	{
 		return TargetBlock->Side == Side;
 	}
@@ -119,6 +133,15 @@ void ACheckerboard::BeginPlay()
 {
 	Super::BeginPlay();
 	SpawnBlocks();
+}
+
+void ACheckerboard::Destroyed()
+{
+	Super::Destroyed();
+	for (ABlock* BlockInstance : BlockInstances)
+	{
+		BlockInstance->Destroy();
+	}
 }
 
 // Called every frame

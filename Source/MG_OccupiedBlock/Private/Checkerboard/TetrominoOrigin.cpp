@@ -65,14 +65,13 @@ void UTetrominoOrigin::RotateTo(float Degrees)
 {
 	float OffsetDegrees = Degrees - RotateDegree;
 	if (FMath::IsNearlyZero(OffsetDegrees)) return;
-	BlockOccupationArray = NormalBlockOccupationArray;
-	FMath::DivideAndRoundNearest<float>(Degrees, 360.f);
 	int32 FloorDegrees = FMath::FloorToInt(Degrees);
-	RotateDegree = Degrees - FloorDegrees + FloorDegrees % 360;
+	RotateDegree = (Degrees - FloorDegrees) + FloorDegrees % 360;
+	BlockOccupationArray.Empty();
 
-	for (int32 i = 0; i < BlockOccupationArray.Num(); i++)
+	for (int32 i = 0; i < NormalBlockOccupationArray.Num(); i++)
 	{
-		BlockOccupationArray[i] = BlockOccupationArray[i].GetRotated(RotateDegree);
+		BlockOccupationArray.Add(NormalBlockOccupationArray[i].GetRotated(RotateDegree));
 	}
 
 }

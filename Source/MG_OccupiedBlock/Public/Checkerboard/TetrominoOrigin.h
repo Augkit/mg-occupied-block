@@ -48,8 +48,7 @@ public:
 	DelegateOnChangeSide OnChangeSide;
 protected:
 	// 原始的拼图块位置
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		TArray<FVector2D> NormalBlockOccupationArray;
+	TArray<FVector2D> NormalBlockOccupationArray;
 
 	// 当前各个格子的位置
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
