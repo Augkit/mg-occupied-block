@@ -11,6 +11,7 @@ ABlock::ABlock()
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	RootStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Block"));
 	RootStaticMesh->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	RootStaticMesh->SetCollisionProfileName(FName("IgnoreAll"));
 }
 
 FVector2D ABlock::GetRowCol()
@@ -32,8 +33,6 @@ void ABlock::SetColor(FLinearColor Color)
 	}
 	if (MIColor != nullptr)
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("Hello, %s"), *ColorMaterialParamName.ToString());
-		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString::Printf(TEXT("My Location is: %s"), *Color.ToString()));
 		MIColor->SetVectorParameterValue(ColorMaterialParamName, Color);
 	}
 }

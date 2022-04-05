@@ -11,7 +11,7 @@
  *
  */
 
-DECLARE_MULTICAST_DELEGATE_OneParam(DelegateOnChangeSide, int32)
+DECLARE_MULTICAST_DELEGATE_OneParam(OnChangeSideDelegate, int32)
 
 UCLASS(Blueprintable, BlueprintType)
 class MG_OCCUPIEDBLOCK_API UTetrominoOrigin : public UObject
@@ -19,7 +19,9 @@ class MG_OCCUPIEDBLOCK_API UTetrominoOrigin : public UObject
 	GENERATED_BODY()
 
 public:
-	virtual void PostInitProperties() override;
+	// 世界位置的偏移
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		FVector2D OffsetCenterWorld;
 
 	UFUNCTION(BlueprintCallable)
 		void SetSide(int32 NewSide);
@@ -45,10 +47,12 @@ public:
 		void RotateTo(float Degrees);
 
 	// 阵营数据发生变化时的钩子
-	DelegateOnChangeSide OnChangeSide;
+	OnChangeSideDelegate OnChangeSide;
 protected:
-	// 原始的拼图块位置
+	// 原始的拼图块位置，做备份用
 	TArray<FVector2D> NormalBlockOccupationArray;
+	// 拼图块所占的位置
+	TArray<FVector2D> OriginBlockOccupationArray;
 
 	// 当前各个格子的位置
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -62,7 +66,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		float RotateDegree = 0;
 
-	TArray<FVector2D> OriginBlockOccupationArray;
-
+	// 阵营
 	int32 Side = -1;
+
+	virtual void PostInitProperties() override;
+
 };

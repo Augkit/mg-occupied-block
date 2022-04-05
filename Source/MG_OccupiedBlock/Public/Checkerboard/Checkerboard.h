@@ -5,8 +5,22 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Checkerboard/Block.h"
-#include "Checkerboard/CheckerboardController.h"
 #include "Checkerboard.generated.h"
+
+class UCheckerboardController;
+USTRUCT(BlueprintType)
+struct FBlockSide
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 Side;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 Col;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 Row;
+};
 
 UCLASS()
 class MG_OCCUPIEDBLOCK_API ACheckerboard : public AActor
@@ -20,8 +34,8 @@ public:
 		int32 Size;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Size)
 		float WidthHeight;
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Size)
-		//TMap<int32, TArray<FVector2D>> Mapping;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Size)
+		TArray<FBlockSide> DefaultBlocksSide;
 
 	UPROPERTY(BlueprintReadOnly, Category = Checkerboard)
 		TArray<ABlock*> BlockInstances;
@@ -30,6 +44,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void SpawnBlocks();
+
+	// 更具用户给出的阵营列表来初始化阵营
+	UFUNCTION(BlueprintCallable)
+		void InitBlockSide(TArray<int32> Sides);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 		int32 GetBlockIndexByColRow(FVector2D Location);
@@ -60,6 +78,8 @@ public:
 		void SetBlocksSide(TArray<FVector2D> BlockLocations, int32 Side);
 
 	void SetCheckerboardController(UCheckerboardController* CheckerboardControllerPtr);
+
+	int32 GetDefaultSideByColRow(int32 Col, int32 Row);
 
 protected:
 	UCheckerboardController* CheckerboardController;

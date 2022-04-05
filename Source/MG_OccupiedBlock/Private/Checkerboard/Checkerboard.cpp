@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Checkerboard/Checkerboard.h"
+#include "Checkerboard/CheckerboardController.h"
 
 #include "Kismet/KismetMathLibrary.h"
 
@@ -33,6 +34,20 @@ void ACheckerboard::SpawnBlocks()
 			BlockInstances.Add(BlockActor);
 		}
 	}
+}
+
+void ACheckerboard::InitBlockSide(TArray<int32> Sides)
+{
+		
+	for (ABlock* BlockInstance : BlockInstances)
+	{
+		int32 Side = GetDefaultSideByColRow(BlockInstance->IndexCol, BlockInstance->IndexRow);
+		if(Sides.Find(Side) != INDEX_NONE)
+		{
+			BlockInstance->SetSideAndColor(Side, CheckerboardController->GetColorBySide(Side));
+		}
+	}
+
 }
 
 int32 ACheckerboard::GetBlockIndexByColRow(FVector2D Location)
@@ -126,6 +141,18 @@ void ACheckerboard::SetBlocksSide(TArray<FVector2D> BlockLocations, int32 Side)
 void ACheckerboard::SetCheckerboardController(UCheckerboardController* CheckerboardControllerPtr)
 {
 	CheckerboardController = CheckerboardControllerPtr;
+}
+
+int32 ACheckerboard::GetDefaultSideByColRow(int32 Col, int32 Row)
+{
+	for (FBlockSide BlocksSide : DefaultBlocksSide)
+	{
+		if(BlocksSide.Col == Col && BlocksSide.Row == Row)
+		{
+			return BlocksSide.Side;
+		}
+	}
+	return -1;
 }
 
 // Called when the game starts or when spawned
