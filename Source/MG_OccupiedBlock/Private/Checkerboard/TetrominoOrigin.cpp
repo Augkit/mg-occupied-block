@@ -35,10 +35,26 @@ void UTetrominoOrigin::SetSide(int32 NewSide)
 	Side = NewSide;
 	OnChangeSide.Broadcast(Side);
 }
-
 TArray<FVector2D> UTetrominoOrigin::GetBlockOccupationArray()
 {
 	return BlockOccupationArray;
+}
+void UTetrominoOrigin::SetBlockOccupationArray(TArray<FVector2D> Arr)
+{
+	BlockOccupationArray = Arr;
+	if (!OffsetCenter.IsNearlyZero())
+	{
+		for (FVector2D& BlockOccupation : BlockOccupationArray)
+		{
+			BlockOccupation -= OffsetCenter;
+		}
+		/*for (int32 i = 0; i < BlockOccupationArray.Num(); i++)
+		{
+			FVector2D* BlockOccupation = &BlockOccupationArray[i];
+			*BlockOccupation -= OffsetCenter;
+		}*/
+	}
+	NormalBlockOccupationArray = BlockOccupationArray;
 }
 
 void UTetrominoOrigin::GetBlockOccupationArrayRef(TArray<FVector2D>& Out)
@@ -67,11 +83,20 @@ void UTetrominoOrigin::RotateTo(float Degrees)
 	if (FMath::IsNearlyZero(OffsetDegrees)) return;
 	int32 FloorDegrees = FMath::FloorToInt(Degrees);
 	RotateDegree = (Degrees - FloorDegrees) + FloorDegrees % 360;
-	BlockOccupationArray.Empty();
-
-	for (int32 i = 0; i < NormalBlockOccupationArray.Num(); i++)
+	//UE_LOG(LogTemp, Warning, TEXT("xxxx Prev BlockOccupationArray %d, "), BlockOccupationArray.Num());
+	//BlockOccupationArray.Empty();
+	//UE_LOG(LogTemp, Warning, TEXT("xxxx NormalBlockOccupationArray %d, "), NormalBlockOccupationArray.Num());
+	//for (int32 i = 0; i < NormalBlockOccupationArray.Num(); i++)
+	//{
+	//	BlockOccupationArray.Add(NormalBlockOccupationArray[i].GetRotated(RotateDegree));
+	//}
+	//UE_LOG(LogTemp, Warning, TEXT("xxxx BlockOccupationArray %d, "), BlockOccupationArray.Num());
+	/*for (int32 i = 0; i < BlockOccupationArray.Num(); i++)
 	{
-		BlockOccupationArray.Add(NormalBlockOccupationArray[i].GetRotated(RotateDegree));
+		BlockOccupationArray[i] = BlockOccupationArray[i].GetRotated(OffsetDegrees);
+	}*/
+	for (FVector2D& BlockOccupation : BlockOccupationArray)
+	{
+		BlockOccupation = BlockOccupation.GetRotated(OffsetDegrees);
 	}
-
 }

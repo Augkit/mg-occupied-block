@@ -18,22 +18,10 @@ ATetromino::ATetromino()
 
 }
 
-ATetromino::ATetromino(TSubclassOf<UTetrominoOrigin> OC) : OriginClass(OC)
-{
-	ATetromino();
-}
-
-ATetromino::ATetromino(TSubclassOf<ABlock> BC) : BlockClass(BC)
-{
-	ATetromino();
-}
-
 void ATetromino::SetDisable(bool value)
 {
 	Disable = value;
-	UE_LOG(LogTemp, Warning, TEXT("----------------- Some warning %d, Active %d"), Disable, DisablePanelComponentPtr->IsActive());
 	DynamicDisableMaterial->SetScalarParameterValue(FName(TEXT("Visible")), Disable ? 1 : 0);
-	//DynamicDisableMaterial->SetScalarParameterByIndex(0, Disable ? 0 : 1);
 }
 
 bool ATetromino::GetDisable()
@@ -43,16 +31,10 @@ bool ATetromino::GetDisable()
 
 void ATetromino::SpawnBlocks()
 {
-	//const FTransform TetrominoTransform = GetActorTransform();
-	//FVector2D Center = Origin->GetOffsetCenter();
-	//float OffsetX = Center.X;
-	//float OffsetY = Center.Y;
-	//AddActorWorldOffset(FVector(-OffsetX * BlockWidthHeight, -OffsetY * BlockWidthHeight, 0));
 
 	FActorSpawnParameters SpawnParameters;
 	SpawnParameters.Owner = this;
-	TArray<FVector2D> BlockOccupationArray;
-	Origin->GetBlockOccupationArrayRef(BlockOccupationArray);
+	TArray<FVector2D> BlockOccupationArray = Origin->GetBlockOccupationArray();
 	for (FVector2D BlockOccupation : BlockOccupationArray)
 	{
 		const float Col = BlockOccupation.X;
@@ -60,14 +42,9 @@ void ATetromino::SpawnBlocks()
 		FTransform BlockRelativeTransform;
 		FVector BlockLocation = FVector(Col * BlockWidthHeight, Row * BlockWidthHeight, 0);
 		BlockRelativeTransform.SetLocation(BlockLocation);
-		//FTransform BlockWorldTransform = UKismetMathLibrary::ComposeTransforms(BlockRelativeTransform, TetrominoTransform);
-		//ABlock* BlockActor = GetWorld()->SpawnActor<ABlock>(BlockClass, BlockWorldTransform, SpawnParameters);
 		ABlock* BlockActor = GetWorld()->SpawnActor<ABlock>(BlockClass, BlockRelativeTransform, SpawnParameters);
 		BlockActor->IndexCol = Col;
 		BlockActor->IndexRow = Row;
-		//BlockActor->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
-
-		//BlockActor->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
 		BlockActor->AttachToComponent(ContainerSceneComponentPtr, FAttachmentTransformRules::KeepRelativeTransform);
 		BlockInstances.Add(BlockActor);
 	}
@@ -80,7 +57,6 @@ void ATetromino::RotateTo(float Degrees)
 	Origin->RotateTo(Degrees);
 	// 表现层旋转
 	bIsRotating = true;
-	RotationTarget = FRotator(0, Degrees, 0);
 	RotationTarget = FRotator(0, Degrees, 0);
 }
 
@@ -135,24 +111,29 @@ void ATetromino::HandleChangeSide(int32 Side)
 	}
 }
 
+void ATetromino::PostInitProperties()
+{
+	Super::PostInitProperties();
+
+}
+
 // Called when the game starts or when spawned
 void ATetromino::BeginPlay()
 {
 	Super::BeginPlay();
+
 	// 实例化拼图块元数据
 	Origin = NewObject<UTetrominoOrigin>(this, OriginClass);
-	// 绑定阵营发生变化时的逻辑
 	Origin->OnChangeSide.AddUObject(this, &ATetromino::HandleChangeSide);
 
 	// 生成方块Actor
 	SpawnBlocks();
 
+	// 禁止标志
 	DisableMaterial = DisablePanelComponentPtr->GetMaterial(0);
-	//UMaterialInterface* DisableMaterial = DisablePanelComponentPtr->GetMaterial(0);
 	DynamicDisableMaterial = UMaterialInstanceDynamic::Create(DisableMaterial->GetMaterial(), this);
 	DisablePanelComponentPtr->SetMaterial(0, DynamicDisableMaterial);
 	DisablePanelComponentPtr->AddRelativeLocation(FVector(Origin->OffsetCenterWorld * BlockWidthHeight, 0));
-	//DynamicDisableMaterial->SetScalarParameterValue(FName(TEXT("Visible")), 0);
 	SetDisable(Disable);
 }
 

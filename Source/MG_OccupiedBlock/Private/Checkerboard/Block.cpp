@@ -21,17 +21,17 @@ FVector2D ABlock::GetRowCol()
 
 void ABlock::SetColor(FLinearColor Color)
 {
-
-	if (MIColor == nullptr)
+	// 懒加载动态材质实例
+	if (!IsValid(MIColor))
 	{
 		UMaterialInterface* ColorMaterial = RootStaticMesh->GetMaterial(ColorMaterialIndex);
-		if (ColorMaterial != nullptr)
+		if (IsValid(ColorMaterial))
 		{
 			MIColor = UMaterialInstanceDynamic::Create(ColorMaterial, this);
 			RootStaticMesh->SetMaterial(ColorMaterialIndex, MIColor);
 		}
 	}
-	if (MIColor != nullptr)
+	if (IsValid(MIColor))
 	{
 		MIColor->SetVectorParameterValue(ColorMaterialParamName, Color);
 	}

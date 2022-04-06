@@ -34,8 +34,6 @@ public:
 		UCheckerboardController* CheckerboardController;
 	// Sets default values for this actor's properties
 	ATetromino();
-	ATetromino(TSubclassOf<UTetrominoOrigin> OC);
-	ATetromino(TSubclassOf<ABlock> BC);
 
 	UFUNCTION(BlueprintCallable)
 		void SetDisable(bool value);
@@ -83,9 +81,11 @@ protected:
 	UPROPERTY(EditAnywhere, Meta = (ExposeOnSpawn = true), BlueprintReadOnly)
 		bool Disable = true;
 
-	UMaterialInterface* DisableMaterial;
+	UPROPERTY()
+		UMaterialInterface* DisableMaterial;
 
-	UMaterialInstanceDynamic* DynamicDisableMaterial;
+	UPROPERTY()
+		UMaterialInstanceDynamic* DynamicDisableMaterial;
 
 	/* 子方块Actor容器
 	 方便用于不影响拼图块Actor的rotater的情况下实现旋转
@@ -98,7 +98,8 @@ protected:
 		UStaticMeshComponent* DisablePanelComponentPtr;
 
 	// 拼图块数据源实例
-	UTetrominoOrigin* Origin;
+	UPROPERTY()
+		UTetrominoOrigin* Origin;
 
 	// 旋转目标
 	FRotator RotationTarget;
@@ -112,7 +113,8 @@ protected:
 	bool bIsMoveing;
 
 	// 抖动曲线，横纵向抖动时间，纵向抖动角度
-	UCurveFloat* ShakeCurve;
+	UPROPERTY()
+		UCurveFloat* ShakeCurve;
 	// 需要抖动的时间
 	float LimitedShakingTime = 0;
 	// 当前抖动时间
@@ -120,6 +122,7 @@ protected:
 	// 是否需要抖动
 	bool bIsShaking = false;
 
+	virtual void PostInitProperties() override;
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 

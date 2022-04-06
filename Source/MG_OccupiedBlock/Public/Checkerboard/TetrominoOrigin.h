@@ -32,6 +32,9 @@ public:
 		TArray<FVector2D> GetBlockOccupationArray();
 
 	UFUNCTION(BlueprintCallable)
+		void SetBlockOccupationArray(TArray<FVector2D> Arr);
+
+	UFUNCTION(BlueprintCallable)
 		void GetBlockOccupationArrayRef(TArray<FVector2D>& Out);
 
 	UFUNCTION(BlueprintCallable)

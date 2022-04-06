@@ -59,9 +59,7 @@ FVector ACheckerboard::GetWorldLocationByColRow(int32 Col, int32 Row)
 {
 	const FTransform CheckerboardTransform = GetActorTransform();
 	const float CenterOffset = (Size - 1) * WidthHeight / 2;
-	FVector BlockLocation;
-	BlockLocation.X = Col * WidthHeight - CenterOffset;
-	BlockLocation.Y = Row * WidthHeight - CenterOffset;
+	FVector BlockLocation = FVector(Col * WidthHeight - CenterOffset, Row * WidthHeight - CenterOffset, 0);
 	return UKismetMathLibrary::TransformLocation(CheckerboardTransform, BlockLocation);
 }
 
@@ -113,7 +111,7 @@ int32 ACheckerboard::GetScoreBySide(int32 Side)
 bool ACheckerboard::IsSameSideByLocation(int32 Side, FVector2D Location)
 {
 	ABlock* TargetBlock = GetBlockByLocation(Location);
-	if (TargetBlock != nullptr)
+	if (IsValid(TargetBlock))
 	{
 		return TargetBlock->Side == Side;
 	}

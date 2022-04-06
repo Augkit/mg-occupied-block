@@ -6,15 +6,15 @@ FVector2D FourWay[4] = { FVector2D(1,0), FVector2D(-1,0),FVector2D(0,1),FVector2
 
 void UCheckerboardController::MoveTetrominoToBoardLocation(ATetromino* TargetTetromino, FVector2D BoardLocation)
 {
-	//UTetrominoOrigin* TetrominoOrigin = TargetTetromino->GetTetrominoOrigin();
 	FVector WorldLocation = Checkerboard->GetWorldLocationByColRow(BoardLocation.X, BoardLocation.Y);
 	TetrominoBoardLocation = FVector2D(FMath::RoundToInt(BoardLocation.X), FMath::RoundToInt(BoardLocation.Y));
+	UE_LOG(LogTemp, Warning, TEXT("xxx ??? %s"), *WorldLocation.ToString());
 	TargetTetromino->MoveToWorldLocation(WorldLocation);
 }
 
 void UCheckerboardController::MoveTetrominoOnBoardByStep(FVector2D Step)
 {
-	if (TetrominoOnBoard != nullptr)
+	if (IsValid(TetrominoOnBoard))
 	{
 		MoveTetrominoToBoardLocation(TetrominoOnBoard, TetrominoBoardLocation + Step);
 	}
@@ -43,7 +43,7 @@ void UCheckerboardController::SetTetrominoOnBoard(ATetromino* TetrominoPtr)
 
 bool UCheckerboardController::CheckTetrominoVacancies(ATetromino* TetrominoPtr, FVector2D& ValidLocation, float& ValidDegrees)
 {
-	UTetrominoOrigin* OriginCopy = DuplicateObject<UTetrominoOrigin>(TetrominoPtr->GetTetrominoOrigin(), nullptr);
+	UTetrominoOrigin* OriginCopy = DuplicateObject<UTetrominoOrigin>(TetrominoPtr->GetTetrominoOrigin(), this);
 
 	int32 BlockMount = OriginCopy->BlockNum();
 	int32 TetrominoSide = TetrominoPtr->GetSide();
@@ -51,10 +51,11 @@ bool UCheckerboardController::CheckTetrominoVacancies(ATetromino* TetrominoPtr, 
 	// 旋转4次，对每次旋转后的拼图块与棋盘每个网格进行校验是否放的下
 	for (int32 i = 0; i < 4; i++)
 	{
-		float  Degrees = i * 90;
+		float Degrees = i * 90;
 		OriginCopy->RotateTo(Degrees);
-		TArray<FVector2D> TetrominoBlockRelativeLocation;
-		OriginCopy->GetBlockOccupationArrayRef(TetrominoBlockRelativeLocation);
+		TArray<FVector2D> TetrominoBlockRelativeLocation = OriginCopy->GetBlockOccupationArray();
+		//OriginCopy->GetBlockOccupationArrayRef(TetrominoBlockRelativeLocation);
+		UE_LOG(LogTemp, Warning, TEXT("xxx NowBlockMount %d,  PrevBlockMount %d, Length: %d"), OriginCopy->BlockNum(), BlockMount, TetrominoBlockRelativeLocation.Num());
 
 		// 检测当前棋盘块为中心点是否可以放下4个角度下拼图块
 		for (ABlock* BoardBlockInstance : Checkerboard->BlockInstances)
@@ -122,8 +123,8 @@ bool UCheckerboardController::CheckTetrominoVacancieAtLocation(UTetrominoOrigin*
 	int32 TetrominoSide = TetrominoOrigin->GetSide();
 	int32 BlockMount = TetrominoOrigin->BlockNum();
 
-	TArray<FVector2D> TetrominoBlockRelativeLocation;
-	TetrominoOrigin->GetBlockOccupationArrayRef(TetrominoBlockRelativeLocation);
+	TArray<FVector2D> TetrominoBlockRelativeLocation = TetrominoOrigin->GetBlockOccupationArray();
+	//TetrominoOrigin->GetBlockOccupationArrayRef(TetrominoBlockRelativeLocation);
 
 	// 是否符合规则 （不越界，拼图块的各个区块对应的棋盘区块都要为中立）
 	bool IsMatchRules = true;
