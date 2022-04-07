@@ -15,6 +15,7 @@ ACheckerboard::ACheckerboard()
 void ACheckerboard::SpawnBlocks()
 {
 	const FTransform CheckerboardTransform = GetActorTransform();
+	// 每个棋盘格需要进行偏移，让棋盘的正中心保持在Actor的WorldLocation的位置
 	const float CenterOffset = (Size - 1) * WidthHeight / 2;
 	FActorSpawnParameters SpawnParameters;
 	SpawnParameters.Owner = this;
@@ -22,14 +23,17 @@ void ACheckerboard::SpawnBlocks()
 	{
 		for (int32 Col = 0; Col < Size; Col++)
 		{
+			//棋盘格的相对位置
 			FTransform BlockRelativeTransform;
 			FVector BlockLocation = FVector(Col * WidthHeight - CenterOffset, Row * WidthHeight - CenterOffset, 0);
 			BlockRelativeTransform.SetLocation(BlockLocation);
+			// 将棋盘格的相对位置通过棋盘的Transform来进行偏移，计算出棋盘格附加在棋盘上之后的世界位置
 			FTransform BlockWorldTransform = UKismetMathLibrary::ComposeTransforms(BlockRelativeTransform, CheckerboardTransform);
 
 			ABlock* BlockActor = GetWorld()->SpawnActor<ABlock>(BlockClass, BlockWorldTransform, SpawnParameters);
 			BlockActor->IndexCol = Col;
 			BlockActor->IndexRow = Row;
+			// 将生成的格子Attach到棋盘下面
 			BlockActor->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
 			BlockInstances.Add(BlockActor);
 		}
@@ -69,7 +73,6 @@ FVector ACheckerboard::GetWorldLocationByBlock(ABlock* Block, bool& Success)
 	{
 		if (Block == BlockInstances[i])
 		{
-			const FTransform CheckerboardTransform = GetActorTransform();
 			Success = true;
 			return GetWorldLocationByColRow(Block->IndexCol, Block->IndexRow);
 		}
@@ -165,7 +168,10 @@ void ACheckerboard::Destroyed()
 	Super::Destroyed();
 	for (ABlock* BlockInstance : BlockInstances)
 	{
-		BlockInstance->Destroy();
+		if(IsValid(BlockInstance))
+		{
+			BlockInstance->Destroy();
+		}
 	}
 }
 

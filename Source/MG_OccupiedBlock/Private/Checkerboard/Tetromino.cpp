@@ -11,8 +11,10 @@ ATetromino::ATetromino()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("DefaultRootScene"));
+	// 子格子的容器
 	ContainerSceneComponentPtr = CreateDefaultSubobject<USceneComponent>(TEXT("ContainerScene"));
 	ContainerSceneComponentPtr->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	// 拼图块禁用标记
 	DisablePanelComponentPtr = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DisablePanel"));
 	DisablePanelComponentPtr->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
@@ -136,6 +138,7 @@ void ATetromino::BeginPlay()
 	DisablePanelComponentPtr->AddRelativeLocation(FVector(Origin->OffsetCenterWorld * BlockWidthHeight, 0));
 	SetDisable(Disable);
 }
+
 
 
 void ATetromino::Destroyed()

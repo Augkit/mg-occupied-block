@@ -8,7 +8,6 @@ void UCheckerboardController::MoveTetrominoToBoardLocation(ATetromino* TargetTet
 {
 	FVector WorldLocation = Checkerboard->GetWorldLocationByColRow(BoardLocation.X, BoardLocation.Y);
 	TetrominoBoardLocation = FVector2D(FMath::RoundToInt(BoardLocation.X), FMath::RoundToInt(BoardLocation.Y));
-	UE_LOG(LogTemp, Warning, TEXT("xxx ??? %s"), *WorldLocation.ToString());
 	TargetTetromino->MoveToWorldLocation(WorldLocation);
 }
 
@@ -54,8 +53,6 @@ bool UCheckerboardController::CheckTetrominoVacancies(ATetromino* TetrominoPtr, 
 		float Degrees = i * 90;
 		OriginCopy->RotateTo(Degrees);
 		TArray<FVector2D> TetrominoBlockRelativeLocation = OriginCopy->GetBlockOccupationArray();
-		//OriginCopy->GetBlockOccupationArrayRef(TetrominoBlockRelativeLocation);
-		UE_LOG(LogTemp, Warning, TEXT("xxx NowBlockMount %d,  PrevBlockMount %d, Length: %d"), OriginCopy->BlockNum(), BlockMount, TetrominoBlockRelativeLocation.Num());
 
 		// 检测当前棋盘块为中心点是否可以放下4个角度下拼图块
 		for (ABlock* BoardBlockInstance : Checkerboard->BlockInstances)
@@ -104,7 +101,6 @@ bool UCheckerboardController::CheckTetrominoVacancies(ATetromino* TetrominoPtr, 
 
 		}
 	}
-
 	return false;
 }
 

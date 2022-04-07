@@ -28,12 +28,16 @@ class MG_OCCUPIEDBLOCK_API ACheckerboard : public AActor
 	GENERATED_BODY()
 
 public:
+	// 棋盘格的类
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Checkerboard)
 		TSubclassOf<ABlock> BlockClass;
+	// 尺寸
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Size)
 		int32 Size;
+	// 大小
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Size)
 		float WidthHeight;
+	// 默认的棋盘格阵营
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Size)
 		TArray<FBlockSide> DefaultBlocksSide;
 
